@@ -21,6 +21,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("from Order where id = :id and isDeleted = false and delivered = false and active = false")
     Optional<Order> get(@Param(value = "id") Long id);
 
-    @Query("from Order where userId= :userId and isDeleted = false and delivered = false and active = true")
+    @Query("from Order where userId = :userId and isDeleted = false and delivered = false and active = true")
     Optional<Order> getByUserId(@Param(value = "userId") Long userId);
 }

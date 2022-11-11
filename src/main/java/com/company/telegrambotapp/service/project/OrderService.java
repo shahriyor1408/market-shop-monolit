@@ -10,6 +10,7 @@ import com.company.telegrambotapp.service.bot.MyBot;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -27,11 +28,10 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final AuthUserService userService;
-
     private final MyBot myBot;
-
     private static boolean marked = false;
 
+    @Transactional
     public void order() {
         Order order = getByUserId();
         order.setActive(false);

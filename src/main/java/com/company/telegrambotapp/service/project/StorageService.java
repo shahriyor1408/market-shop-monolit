@@ -47,7 +47,6 @@ public class StorageService {
 
     public ResponseEntity<byte[]> getCover(@PathVariable String filename) throws IOException {
         BlobId blobId = BlobId.of("shakhriyor-s-project.appspot.com", filename);
-
         Blob blob = storage.get(blobId);
         Map<String, String> metadata = blob.getMetadata();
         return ResponseEntity.ok()
