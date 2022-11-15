@@ -8,6 +8,7 @@ import com.company.telegrambotapp.repository.project.OrderRepository;
 import com.company.telegrambotapp.service.auth.AuthUserService;
 import com.company.telegrambotapp.service.project.CategoryService;
 import com.company.telegrambotapp.service.project.ProductService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -49,10 +50,10 @@ public class MyBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Long userId = update.getMessage().getFrom().getId();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(update.getMessage().getChatId());
         if (update.hasMessage()) {
+            Long userId = update.getMessage().getFrom().getId();
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(update.getMessage().getChatId());
             if (String.valueOf(userId).equals(BotConstants.ADMIN_ID)) {
                 chatId = update.getMessage().getChatId();
                 handleMessage(update);
@@ -76,7 +77,7 @@ public class MyBot extends TelegramLongPollingBot {
             EditMessageText editMessageText = new EditMessageText(String.valueOf(message.getChatId()));
             editMessageText.setChatId(String.valueOf(user.getId()));
             editMessageText.setMessageId(message.getMessageId());
-            Order order = orderRepository.get(Long.valueOf(orderId)).orElseThrow(() -> {
+            Order order = orderRepository.findById(Long.valueOf(orderId)).orElseThrow(() -> {
                 throw new GenericNotFoundException("Order not found!", 404);
             });
             order.setDelivered(true);
@@ -99,7 +100,7 @@ public class MyBot extends TelegramLongPollingBot {
             sendPhoto.setParseMode(ParseMode.MARKDOWN);
             sendPhoto.setChatId(message.getChatId());
             sendPhoto.setPhoto(new InputFile("https://firebasestorage.googleapis.com/v0/b/shakhriyor-s-project.appspot.com/o/market.png?alt=media&token=a699a9dd-8e96-4968-91d9-fbaf726a5fe1"));
-            sendPhoto.setCaption("**" + user.getUserName()
+            sendPhoto.setCaption("**@" + user.getUserName()
                     + " admin panelga xush kelibsiz!\nBu yerda sizga buyurtmalar haqida xabar berib turiladi.**");
             sendMsg(sendPhoto);
         }
@@ -143,11 +144,11 @@ public class MyBot extends TelegramLongPollingBot {
         }
     }
 
-    public void order(Order order) {
+    public void order(@NonNull Order order, @NonNull List<OrderItem> orderItemList) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setParseMode(ParseMode.MARKDOWN);
-        sendMessage.setText(getText(order));
+        sendMessage.setText(getText(order, orderItemList));
         sendMessage.setReplyMarkup(getKeyBoardButtons(order));
         sendMsg(sendMessage);
     }
@@ -161,19 +162,20 @@ public class MyBot extends TelegramLongPollingBot {
         return InlineKeyboardUtil.getMarkup(InlineKeyboardUtil.getRowList(row1, row2));
     }
 
-    private String getText(Order order) {
+    private String getText(Order order, @NonNull List<OrderItem> orderItemList) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("**Yangi buyurtma!**\n\n");
-        List<OrderItem> orderItems = order.getOrderItems();
-
         int counter = 1;
-        for (OrderItem orderItem : orderItems) {
+        for (OrderItem orderItem : orderItemList) {
             ProductDto productDto = productService.get(orderItem.getProductId());
-            stringBuilder.append(counter++).append(". **Nomi** - ").append(productDto.getName()).append("\n");
-            stringBuilder.append(counter++).append(". **Kategoriyasi** - ").append(categoryService.get(productDto.getCategoryId())).append("\n");
-            stringBuilder.append(counter++).append("  **Soni** - ").append(orderItem.getCount()).append("\n\n");
+            stringBuilder.append(counter++).append(".**Nomi** - ").append(productDto.getName()).append("\n");
+            stringBuilder.append("**Kategoriyasi** - ").append(categoryService.get(productDto.getCategoryId()).getName()).append("\n");
+            stringBuilder.append("**Soni** - ").append(orderItem.getCount()).append("\n");
+            stringBuilder.append("**Narxi(1 dona)** - ").append(productDto.getPrice()).append("\n\n");
         }
+        stringBuilder.append("**Jami narx** : ").append(order.getTotalPrice()).append("$\n");
         stringBuilder.append("**Manzil** : ").append(order.getLocation()).append("\n");
+        stringBuilder.append("**Username** : ").append(userService.getCurrentAuthUser().getUsername()).append("\n");
         stringBuilder.append("**Telefon** : ").append(userService.getCurrentAuthUser().getTelephone()).append("\n");
         return stringBuilder.toString();
     }

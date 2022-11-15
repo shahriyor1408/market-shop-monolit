@@ -18,6 +18,7 @@ public class ProductDto {
     private Long id;
     private String name;
     private String description;
+    private Double price;
     private String companyName;
     private Timestamp expiry;
     private String image;

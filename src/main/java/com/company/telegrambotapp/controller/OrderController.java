@@ -1,7 +1,7 @@
 package com.company.telegrambotapp.controller;
 
-import com.company.telegrambotapp.domains.Order;
 import com.company.telegrambotapp.dtos.basket.OrderCreateDto;
+import com.company.telegrambotapp.dtos.basket.OrderDto;
 import com.company.telegrambotapp.response.ApiResponse;
 import com.company.telegrambotapp.service.project.OrderService;
 import org.springframework.web.bind.annotation.*;
@@ -22,24 +22,24 @@ public class OrderController extends ApiController<OrderService> {
     }
 
     @PostMapping(PATH + "/order/book")
-    public ApiResponse<Void> order() {
-        service.order();
+    public ApiResponse<Void> order(@Valid @RequestBody OrderCreateDto dto) {
+        service.order(dto);
         return new ApiResponse<>(200, true);
     }
 
     @GetMapping(PATH + "/order/getAll")
-    public ApiResponse<List<Order>> getAll() {
+    public ApiResponse<List<OrderDto>> getAll() {
         return new ApiResponse<>(service.getAll(), 200);
     }
 
     @GetMapping(PATH + "/order/get/{id}")
-    public ApiResponse<Order> get(@PathVariable Long id) {
+    public ApiResponse<OrderDto> get(@PathVariable Long id) {
         return new ApiResponse<>(service.get(id));
     }
 
     @GetMapping(PATH + "/order/basket")
-    public ApiResponse<Order> basket() {
-        return new ApiResponse<>(service.getByUserId());
+    public ApiResponse<OrderDto> basket() {
+        return new ApiResponse<>(service.basket());
     }
 
     @PostMapping(PATH + "/order/addToBasket/{productId}")
@@ -56,7 +56,7 @@ public class OrderController extends ApiController<OrderService> {
     }
 
     @DeleteMapping(PATH + "/order/delete/{orderItemId}")
-    public ApiResponse<Order> delete(@PathVariable Long orderItemId) {
+    public ApiResponse<OrderDto> delete(@PathVariable Long orderItemId) {
         return new ApiResponse<>(service.deleteOrderItem(orderItemId));
     }
 }

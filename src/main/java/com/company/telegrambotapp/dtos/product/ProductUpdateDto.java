@@ -31,7 +31,7 @@ public class ProductUpdateDto {
     private String description;
 
     @NotNull(message = "Price can not be null!")
-    private Double price;
+    private double price;
 
     @NotBlank(message = "Company name can not be blank!")
     @NotNull(message = "Company name can not be null!")

@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @author "Sohidjonov Shahriyor"
@@ -18,13 +17,7 @@ import java.util.List;
 @Builder
 public class OrderCreateDto {
 
-    @NotNull(message = "Order items can not be null!")
-    private List<OrderItemCreateDto> orderItems;
-
     @NotNull(message = "Location can not be null!")
     @NotBlank(message = "Location can not be blank!")
     private String location;
-
-    @NotNull(message = "Total price can not be null!")
-    private Integer totalPrice;
 }
