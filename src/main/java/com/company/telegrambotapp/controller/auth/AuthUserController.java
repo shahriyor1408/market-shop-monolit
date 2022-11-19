@@ -8,6 +8,7 @@ import com.company.telegrambotapp.dtos.RefreshTokenRequest;
 import com.company.telegrambotapp.dtos.UserRegisterDTO;
 import com.company.telegrambotapp.response.ApiResponse;
 import com.company.telegrambotapp.service.auth.AuthUserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ public class AuthUserController extends ApiController<AuthUserService> {
     }
 
     @GetMapping(value = PATH + "/auth/refresh", produces = "application/json")
+    @PreAuthorize(value = "isAuthenticated()")
     public ApiResponse<JwtResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return new ApiResponse<>(service.refreshToken(refreshTokenRequest));
     }
@@ -42,7 +44,8 @@ public class AuthUserController extends ApiController<AuthUserService> {
     }
 
     @GetMapping(PATH + "/auth/me")
+    @PreAuthorize(value = "isAuthenticated()")
     public AuthUser me() {
-        return null;
+        return service.getCurrentAuthUser();
     }
 }

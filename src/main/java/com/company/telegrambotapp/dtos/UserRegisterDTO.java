@@ -22,4 +22,8 @@ public class UserRegisterDTO {
     @NotBlank(message = "Telephone can not be blank!")
     @NotNull(message = "Telephone can not be null!")
     private String telephone;
+
+    @NotBlank(message = "Full name can not be blank!")
+    @NotNull(message = "Full name can not be null!")
+    private String fullName;
 }

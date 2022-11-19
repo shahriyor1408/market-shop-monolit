@@ -1,5 +1,6 @@
 package com.company.telegrambotapp.service.auth;
 
+import com.company.telegrambotapp.config.security.CustomAuthenticationManager;
 import com.company.telegrambotapp.config.security.UserDetails;
 import com.company.telegrambotapp.domains.auth.AuthUser;
 import com.company.telegrambotapp.dtos.JwtResponse;
@@ -15,7 +16,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,14 +30,14 @@ import java.util.function.Supplier;
 
 @Service
 public class AuthUserService implements UserDetailsService {
-    private final AuthenticationManager authenticationManager;
+    private final CustomAuthenticationManager authenticationManager;
     private final AuthUserRepository authUserRepository;
     private final TokenService accessTokenService;
     private final TokenService refreshTokenService;
     private final AuthUserMapper authUserMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthUserService(@Lazy AuthenticationManager authenticationManager,
+    public AuthUserService(@Lazy CustomAuthenticationManager authenticationManager,
                            AuthUserRepository authUserRepository,
                            @Qualifier("accessTokenService") TokenService accessTokenService,
                            @Qualifier("refreshTokenService") TokenService refreshTokenService,

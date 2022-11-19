@@ -30,6 +30,9 @@ public class AuthUser {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String fullName;
+
     private int loginTryCount;
 
     @Column(unique = true, nullable = false)
@@ -40,7 +43,7 @@ public class AuthUser {
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status = Status.NOT_ACTIVE;
+    private Status status = Status.ACTIVE;
 
     @ManyToMany(targetEntity = AuthRole.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(

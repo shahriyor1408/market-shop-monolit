@@ -77,7 +77,7 @@ public class OrderService {
 
     @Transactional
     public void mark(@NonNull Long id) {
-        Order order = orderRepository.get(id).orElseThrow(() -> {
+        Order order = orderRepository.findById(id).orElseThrow(() -> {
             throw new GenericNotFoundException("Order not found!", 404);
         });
         order.setDelivered(true);
