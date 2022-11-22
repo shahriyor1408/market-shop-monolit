@@ -5,7 +5,6 @@ import com.company.telegrambotapp.dtos.product.ProductDto;
 import com.company.telegrambotapp.dtos.product.ProductUpdateDto;
 import com.company.telegrambotapp.response.ApiResponse;
 import com.company.telegrambotapp.service.project.ProductService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,13 +37,11 @@ public class ProductController extends ApiController<ProductService> {
     }
 
     @GetMapping(PATH + "/product/getAll/{categoryId}")
-    @PreAuthorize(value = "isAuthenticated()")
     public ApiResponse<List<ProductDto>> getAllByCategory(@PathVariable Long categoryId) {
         return new ApiResponse<>(service.getAllByCategory(categoryId));
     }
 
     @GetMapping(PATH + "/product/getAll")
-    @PreAuthorize(value = "isAuthenticated()")
     public ApiResponse<List<ProductDto>> getAll() {
         return new ApiResponse<>(service.getAll());
     }
@@ -66,11 +63,5 @@ public class ProductController extends ApiController<ProductService> {
     public ApiResponse<Void> uploadCover(@RequestBody MultipartFile file, @PathVariable Long id) {
         service.uploadCover(id, file);
         return new ApiResponse<>(200, true);
-    }
-
-    @GetMapping(PATH + "/product/getCover/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<byte[]> getCover(@PathVariable Long id) {
-        return service.getCover(id);
     }
 }

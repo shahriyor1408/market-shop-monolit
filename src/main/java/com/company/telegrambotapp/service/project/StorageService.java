@@ -1,23 +1,29 @@
 package com.company.telegrambotapp.service.project;
 
+import com.company.telegrambotapp.domains.Image;
+import com.company.telegrambotapp.domains.Product;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author "Sohidjonov Shahriyor"
@@ -28,8 +34,23 @@ import java.util.UUID;
 public class StorageService {
     private Storage storage;
 
+    @Value("${image.upload.path}")
+    private String uploadLocation;
+
+    @PostConstruct
+    public void createFile() {
+        var uploadPath = Paths.get(uploadLocation);
+        if (!Files.exists(uploadPath)) {
+            try {
+                Files.createDirectory(uploadPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public String upload(MultipartFile file) throws IOException {
-        String newFilename = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
+        String newFilename = "unnamed." + StringUtils.getFilenameExtension(file.getOriginalFilename());
         BlobId blobId = BlobId.of("shakhriyor-s-project.appspot.com", newFilename);
 
         Map<String, String> metaData = new HashMap<>();
@@ -41,21 +62,27 @@ public class StorageService {
                 .setMetadata(metaData)
                 .build();
         storage.create(blobInfo, file.getInputStream().readAllBytes());
-        return newFilename;
+        return "https://firebasestorage.googleapis.com/v0/b/shakhriyor-s-project.appspot.com/o/"
+                + newFilename + "?alt=media&token=a699a9dd-8e96-4968-91d9-fbaf726a5fe1";
     }
 
-
-    public ResponseEntity<byte[]> getCover(@PathVariable String filename) throws IOException {
-        BlobId blobId = BlobId.of("shakhriyor-s-project.appspot.com", filename);
-        Blob blob = storage.get(blobId);
-        Map<String, String> metadata = blob.getMetadata();
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename = " + metadata.get("originalName"))
-                .contentLength(Long.parseLong(metadata.get("size")))
-                .contentType(MediaType.parseMediaType(metadata.get("contentType")))
-                .body(blob.getContent());
+    public Image uploadCover(MultipartFile file, @NonNull Product product) {
+        var fileName = file.getOriginalFilename();
+        var dest = Paths.get(uploadLocation + "/" + fileName);
+        try {
+            Files.copy(file.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
+            return Image
+                    .builder()
+                    .contentType(file.getContentType())
+                    .originalName(fileName)
+                    .size(file.getSize())
+                    .path(uploadLocation + "/" + fileName)
+                    .product(product)
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException("Something wrong try again! Check your action!");
+        }
     }
-
 
     @EventListener
     public void init(ApplicationReadyEvent applicationReadyEvent) {

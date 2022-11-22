@@ -10,6 +10,7 @@ import com.company.telegrambotapp.service.project.CategoryService;
 import com.company.telegrambotapp.service.project.ProductService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -38,14 +39,23 @@ public class MyBot extends TelegramLongPollingBot {
     private final OrderRepository orderRepository;
     private Long chatId;
 
+    @Value("${telegram.bot.token}")
+    private String TOKEN;
+
+    @Value("${telegram.bot.username}")
+    private String USERNAME;
+
+    @Value("${telegram.bot.admin_id}")
+    private String ADMIN_ID;
+
     @Override
     public String getBotUsername() {
-        return BotConstants.USERNAME;
+        return USERNAME;
     }
 
     @Override
     public String getBotToken() {
-        return BotConstants.TOKEN;
+        return TOKEN;
     }
 
     @Override
@@ -54,7 +64,7 @@ public class MyBot extends TelegramLongPollingBot {
             Long userId = update.getMessage().getFrom().getId();
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(update.getMessage().getChatId());
-            if (String.valueOf(userId).equals(BotConstants.ADMIN_ID)) {
+            if (String.valueOf(userId).equals(ADMIN_ID)) {
                 chatId = update.getMessage().getChatId();
                 handleMessage(update);
             } else {

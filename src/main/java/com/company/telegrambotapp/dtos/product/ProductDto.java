@@ -21,7 +21,7 @@ public class ProductDto {
     private Double price;
     private String companyName;
     private Timestamp expiry;
-    private String image;
+    private String[] images;
     private Long categoryId;
     private Timestamp createdAt;
     private Long createdBy;
