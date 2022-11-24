@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author "Sohidjonov Shahriyor"
@@ -111,5 +112,10 @@ public class ProductService {
 
     public void uploadCover(@NonNull Long id, @NonNull MultipartFile file) {
         imageRepository.save(storageService.uploadCover(file, this.getOne(id)));
+    }
+
+    public List<ProductDto> search(@NonNull String search) {
+        return repository.search(search).orElse(new ArrayList<>())
+                .stream().map(product -> get(product.getId())).collect(Collectors.toList());
     }
 }

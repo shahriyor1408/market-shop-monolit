@@ -36,7 +36,6 @@ public class CategoryController extends ApiController<CategoryService> {
     }
 
     @GetMapping(PATH + "/category/getAll")
-    @PreAuthorize(value = "isAuthenticated()")
     public ApiResponse<List<Category>> getAll() {
         return new ApiResponse<>(service.getAll());
     }

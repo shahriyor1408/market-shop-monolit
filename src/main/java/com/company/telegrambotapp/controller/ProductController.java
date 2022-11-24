@@ -30,18 +30,22 @@ public class ProductController extends ApiController<ProductService> {
         return new ApiResponse<>(service.create(dto));
     }
 
+    @GetMapping(PATH + "/search")
+    public ApiResponse<List<ProductDto>> search(@RequestParam("search") String search) {
+        return new ApiResponse<>(service.search(search));
+    }
+
     @GetMapping(PATH + "/product/get/{id}")
-    @PreAuthorize(value = "isAuthenticated()")
     public ApiResponse<ProductDto> get(@PathVariable Long id) {
         return new ApiResponse<>(service.get(id));
     }
 
-    @GetMapping(PATH + "/product/getAll/{categoryId}")
+    @GetMapping(PATH + "/product/{categoryId}")
     public ApiResponse<List<ProductDto>> getAllByCategory(@PathVariable Long categoryId) {
         return new ApiResponse<>(service.getAllByCategory(categoryId));
     }
 
-    @GetMapping(PATH + "/product/getAll")
+    @GetMapping("/home")
     public ApiResponse<List<ProductDto>> getAll() {
         return new ApiResponse<>(service.getAll());
     }
