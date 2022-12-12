@@ -13,8 +13,10 @@ public class SecurityConstants {
             "/api/v1/product/get/**",
             "/api/v1/product/**",
             "/api/v1/category/getAll",
-            "/home", "/api/v1/search",
+            "/api/v1/home",
+            "/api/v1/search",
             "/swagger-ui/**",
-            "/api-docs"
+            "/api-docs",
+            "/image"
     };
 }

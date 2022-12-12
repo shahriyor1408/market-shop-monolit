@@ -1,6 +1,6 @@
 package com.company.telegrambotapp.repository.project;
 
-import com.company.telegrambotapp.domains.Image;
+import com.company.telegrambotapp.domains.ImageCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,11 +10,10 @@ import java.util.Optional;
 
 /**
  * @author "Sohidjonov Shahriyor"
- * @since 21/11/22 Monday 16:44
+ * @since 25/11/22 Friday 17:00
  * telegram-bot-app/IntelliJ IDEA
  */
-public interface ImageRepository extends JpaRepository<Image, Long> {
-
-    @Query(value = "from Image where product.id = :id")
-    Optional<List<Image>> getImagesByProductId(@Param(value = "id") Long id);
+public interface ImageCategoryRepository extends JpaRepository<ImageCategory, Long> {
+    @Query(value = "from ImageCategory where category.id = :id")
+    Optional<List<ImageCategory>> getImagesByCategoryId(@Param(value = "id") Long id);
 }

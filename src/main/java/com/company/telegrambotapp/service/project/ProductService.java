@@ -1,13 +1,13 @@
 package com.company.telegrambotapp.service.project;
 
-import com.company.telegrambotapp.domains.Image;
+import com.company.telegrambotapp.domains.ImageProduct;
 import com.company.telegrambotapp.domains.Product;
 import com.company.telegrambotapp.dtos.product.ProductCreateDto;
 import com.company.telegrambotapp.dtos.product.ProductDto;
 import com.company.telegrambotapp.dtos.product.ProductUpdateDto;
 import com.company.telegrambotapp.exceptions.GenericNotFoundException;
 import com.company.telegrambotapp.mapper.ProductMapper;
-import com.company.telegrambotapp.repository.project.ImageRepository;
+import com.company.telegrambotapp.repository.project.ImageProductRepository;
 import com.company.telegrambotapp.repository.project.ProductRepository;
 import com.company.telegrambotapp.service.auth.AuthUserService;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class ProductService {
 
     private final ProductMapper mapper;
     private final AuthUserService userService;
-    private final ImageRepository imageRepository;
+    private final ImageProductRepository imageProductRepository;
 
     public Long create(@NonNull ProductCreateDto dto) {
         return repository.save(Product.childBuilder()
@@ -44,7 +44,7 @@ public class ProductService {
                 .price(dto.getPrice())
                 .companyName(dto.getCompanyName())
                 .expiry(dto.getExpiry())
-                .category(categoryService.get(dto.getCategoryId()))
+                .category(categoryService.getCategory(dto.getCategoryId()))
                 .createdBy(userService.getCurrentAuthUser().getId())
                 .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build()).getId();
@@ -61,13 +61,13 @@ public class ProductService {
     }
 
     private String[] getImagesByProductId(@NonNull Long id) {
-        List<Image> imageList = imageRepository.getImagesByProductId(id).orElseThrow(() -> {
+        List<ImageProduct> imageProductList = imageProductRepository.getImagesByProductId(id).orElseThrow(() -> {
             throw new GenericNotFoundException("Images not found!", 404);
         });
-        String[] images = new String[imageList.size()];
+        String[] images = new String[imageProductList.size()];
         int counter = 0;
-        for (Image image : imageList) {
-            images[counter++] = image.getPath();
+        for (ImageProduct imageProduct : imageProductList) {
+            images[counter++] = imageProduct.getPath();
         }
         return images;
     }
@@ -91,7 +91,7 @@ public class ProductService {
         mapper.update(dto, product);
         product.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         product.setUpdatedBy(userService.getCurrentAuthUser().getId());
-        product.setCategory(categoryService.get(dto.getCategoryId()));
+        product.setCategory(categoryService.getCategory(dto.getCategoryId()));
         repository.save(product);
         return this.get(product.getId());
     }
@@ -111,7 +111,7 @@ public class ProductService {
     }
 
     public void uploadCover(@NonNull Long id, @NonNull MultipartFile file) {
-        imageRepository.save(storageService.uploadCover(file, this.getOne(id)));
+        imageProductRepository.save(storageService.uploadCoverProduct(file, this.getOne(id)));
     }
 
     public List<ProductDto> search(@NonNull String search) {

@@ -45,7 +45,7 @@ public class ProductController extends ApiController<ProductService> {
         return new ApiResponse<>(service.getAllByCategory(categoryId));
     }
 
-    @GetMapping("/home")
+    @GetMapping(PATH + "/home")
     public ApiResponse<List<ProductDto>> getAll() {
         return new ApiResponse<>(service.getAll());
     }

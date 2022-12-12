@@ -23,6 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -109,9 +110,8 @@ public class MyBot extends TelegramLongPollingBot {
             SendPhoto sendPhoto = new SendPhoto();
             sendPhoto.setParseMode(ParseMode.MARKDOWN);
             sendPhoto.setChatId(message.getChatId());
-            sendPhoto.setPhoto(new InputFile("https://firebasestorage.googleapis.com/v0/b/shakhriyor-s-project.appspot.com/o/market.png?alt=media&token=a699a9dd-8e96-4968-91d9-fbaf726a5fe1"));
-            sendPhoto.setCaption("**@" + user.getUserName()
-                    + " admin panelga xush kelibsiz!\nBu yerda sizga buyurtmalar haqida xabar berib turiladi.**");
+            sendPhoto.setPhoto(new InputFile(new File("/home/shahriyor/IdeaProjects/telegram-bot-app/src/main/resources/static/images/market.png")));
+            sendPhoto.setCaption("Salom admin panelga xush kelibsiz!\nBu yerda sizga buyurtmalar haqida xabar berib turiladi.**");
             sendMsg(sendPhoto);
         }
     }

@@ -15,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Image {
+public class ImageProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
