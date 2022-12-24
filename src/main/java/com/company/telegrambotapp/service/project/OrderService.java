@@ -4,8 +4,8 @@ import com.company.telegrambotapp.domains.Order;
 import com.company.telegrambotapp.domains.OrderItem;
 import com.company.telegrambotapp.dtos.basket.OrderCreateDto;
 import com.company.telegrambotapp.dtos.basket.OrderDto;
+import com.company.telegrambotapp.dtos.basket.OrderItemDto;
 import com.company.telegrambotapp.exceptions.GenericNotFoundException;
-import com.company.telegrambotapp.mapper.OrderItemMapper;
 import com.company.telegrambotapp.mapper.OrderMapper;
 import com.company.telegrambotapp.repository.project.OrderItemRepository;
 import com.company.telegrambotapp.repository.project.OrderRepository;
@@ -36,7 +36,6 @@ public class OrderService {
     private final ProductService productService;
     private final MyBot myBot;
     private final OrderMapper mapper;
-    private final OrderItemMapper orderItemMapper;
 
     @Transactional
     public void order(@NonNull OrderCreateDto dto) {
@@ -71,7 +70,17 @@ public class OrderService {
         List<OrderItem> orderItems = orderItemRepository.getByOrderId(order.getId()).orElseThrow(() -> {
             throw new GenericNotFoundException("OrderItems is not found!", 404);
         });
-        dto.setOrderItems(orderItemMapper.toDto(orderItems));
+
+        List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+
+        for (OrderItem orderItem : orderItems) {
+            orderItemDtoList.add(OrderItemDto.builder()
+                    .id(orderItem.getId())
+                    .product(productService.get(orderItem.getProductId()))
+                    .count(orderItem.getCount())
+                    .build());
+        }
+        dto.setOrderItems(orderItemDtoList);
         return dto;
     }
 

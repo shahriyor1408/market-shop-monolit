@@ -1,5 +1,6 @@
 package com.company.telegrambotapp.dtos.basket;
 
+import com.company.telegrambotapp.dtos.product.ProductDto;
 import lombok.*;
 
 /**
@@ -14,6 +15,6 @@ import lombok.*;
 @Builder
 public class OrderItemDto {
     private Long id;
-    private Long productId;
+    private ProductDto product;
     private Integer count;
 }

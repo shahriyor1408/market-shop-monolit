@@ -54,7 +54,6 @@ public class OrderController extends ApiController<OrderService> {
         return new ApiResponse<>(200, true);
     }
 
-
     @PostMapping(PATH + "/order/mark/{id}")
     @PreAuthorize(value = "hasRole('ADMIN')")
     public ApiResponse<Void> mark(@PathVariable Long id) {
